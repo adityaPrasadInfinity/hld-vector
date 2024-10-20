@@ -1,0 +1,135 @@
+
+Part 1 :
+
+users{
+	id bigint (pk)
+	name varchar 
+    email varchar
+
+}
+
+calender {
+	id bigint (pk),
+	user_Id bigint (fk)
+	event_id bigint (fk)
+	created dateTime
+}
+
+event {
+	id bigint (pk)
+	name varchar
+	description varchar 
+	from_time dateTime
+	to_time dateTime
+}
+
+
+scripts:
+
+CREATE TABLE user (
+	id BIGINT auto_increment NOT NULL,
+	name varchar(100),
+	email varchar(100) ,
+	created DATETIME,
+	CONSTRAINT NewTable_PK PRIMARY KEY (id)
+)
+
+CREATE TABLE calender (
+	id BIGINT NOT NULL auto_increment,
+	user_id BIGINT NULL,
+	event_id BIGINT NULL,
+	created DATETIME NULL,
+	CONSTRAINT calender_pk PRIMARY KEY (id)
+)
+
+CREATE TABLE event(
+	id BIGINT NOT NULL auto_increment,
+	name varchar(100),
+	description varchar(500),
+	from_time dateTime,
+	to_time dateTime,
+	created dateTime,
+	CONSTRAINT event_pk PRIMARY KEY (id)
+)
+
+/*sharding: it will be sharded as id in user table would be used, it will be hashed and that will determine in which 
+db the data will go. so there won't be much load on on db
+
+pathioning: it can be done based on hash generated in sharding so the data can be populated or extracted for the
+sharded db
+
+indexing: indexing can be done in all the dbs so the data can be pulled easily
+
+*/
+
+
+Part 2: 
+/*
+1. 
+load balancing: we can employ ALB for load balancing so the load can be divided equally among the instances
+
+cashing: data which is being used frequently can be cashed using redis clusters etc.
+
+Auto-scalling methods: we can increase the no of machines, and start the autoscalling if the load increases
+
+
+2.
+
+Communication protocol: if one point needs to get data frequently and update in it gets done frequently then
+websockets would be a good approach inted of polling a api
+
+message queuing system: we can employ AWS Sqs if there is not much for queuing but if queue is being used a lotn then 
+Kafka can also be used
+
+
+*/
+
+Part 3 :
+
+/*
+
+1.
+for repelectaion straties we can employ the db should be created in form of clusters fo if some data go deleted in db
+it can be taken from it replica db
+
+as for the failing for services its health check should be there so if it gets severe the alert notifies the dev
+ based on the data being received we will have to assign the size of the instance be micro, medium or large
+ same can be for dbs to avoid failures
+
+2. for monitoring the instance the technologies such as cloudwatch, opensearch etc. can be used and alerts can be 
+set based the the response we are getting. such as health check or 400- 500 codes if the requests are failing
+for the we can use new relic by itegrating it with service
+
+*/
+
+Part 4:
+
+/*
+1. datatable - mysql since the data is going to be structured and can be done vertical scalling if the data increases
+	caching - redis can be used . a cluster can be created based on the requirement
+	monitoring - cloudwatch
+	alerts - new relic so i can get the email if instace is getiing lot of failure or it instaces health is down
+	APi gateway: AWS API gateway 
+
+2.
+
+i would ne using auto scalling if the traffic goes high so the no of machines increases
+and the size of the db will also needs be in autoscallingincreasd based on the traffic for medium to large
+just as ec2 instances
+
+to get data that is changing frequently as same endpoint i would use web sockets
+queing service i would use AWS SQS if the traffic in not much but if the traffic increases then shift to kafka
+
+ALB would also be used for load balancing between instances
+
+db clusters would be created with writer and replica for data loss
+
+for monitoring cloudwatch and alert new Relic 
+
+health check is done so if one instace goes down then new instance would be deployed
+
+these will help me in creating scalleable and agile system
+where faliure management is also done
+
+
+*/
